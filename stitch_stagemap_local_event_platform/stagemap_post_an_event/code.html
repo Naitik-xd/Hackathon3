@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Post Event - StageMap</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f6eefc",
+                        "primary-fixed-dim": "#d2bbff",
+                        "on-secondary-container": "#fffbff",
+                        "outline-variant": "#ccc3d8",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#ffdad7",
+                        "surface-container-highest": "#e8dfee",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#d2bbff",
+                        "surface-bright": "#fef7ff",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#7c3aed",
+                        "tertiary": "#704500",
+                        "primary": "#630ed4",
+                        "secondary": "#b71422",
+                        "surface": "#fef7ff",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-surface-variant": "#4a4455",
+                        "surface-dim": "#dfd7e6",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-tertiary-container": "#ffe1c0",
+                        "background": "#fef7ff",
+                        "on-secondary-fixed": "#410004",
+                        "surface-variant": "#e8dfee",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "surface-container-low": "#f9f1ff",
+                        "on-surface": "#1d1a24",
+                        "on-background": "#1d1a24",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#25005a",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#732ee4",
+                        "on-secondary-fixed-variant": "#930014",
+                        "on-primary": "#ffffff",
+                        "outline": "#7b7487",
+                        "primary-fixed": "#eaddff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "tertiary-container": "#905b00",
+                        "secondary-container": "#db3237",
+                        "surface-container": "#f3ebfa",
+                        "inverse-surface": "#332f39",
+                        "surface-container-high": "#ede5f4",
+                        "on-primary-container": "#ede0ff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "xl": "32px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "unit": "4px",
+                        "margin-mobile": "20px",
+                        "xs": "4px",
+                        "margin-desktop": "40px",
+                        "gutter": "16px"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"]
+                    },
+                    fontSize: {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .shimmer-bg {
+            background: linear-gradient(90deg, #630ed4 0%, #a265f2 50%, #630ed4 100%);
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- Top Navigation (Desktop & Tablet) -->
+<nav class="hidden md:flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md max-w-7xl mx-auto bg-surface dark:bg-surface-container-low shadow-sm docked full-width top-0 sticky z-50">
+<div class="font-headline-lg-mobile text-headline-lg-mobile font-black text-primary dark:text-primary-fixed-dim flex items-center gap-1">
+            StageMap
+        </div>
+<div class="flex gap-lg items-center">
+<a class="text-on-surface-variant dark:text-outline-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors font-label-md text-label-md" href="#">Discover</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors font-label-md text-label-md" href="#">Calendar</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors font-label-md text-label-md" href="#">Saved</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors font-label-md text-label-md" href="#">Profile</a>
+</div>
+<div class="flex gap-md text-primary dark:text-primary-fixed-dim">
+<button class="hover:text-primary dark:hover:text-primary-fixed-dim transition-colors"><span class="material-symbols-outlined">location_on</span></button>
+<button class="hover:text-primary dark:hover:text-primary-fixed-dim transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-xl md:py-xl flex flex-col gap-xl">
+<!-- Header -->
+<header class="flex flex-col gap-sm">
+<h1 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl text-on-surface tracking-tight">Post a New Event</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Share what's happening. The city is waiting.</p>
+</header>
+<!-- Form Area -->
+<form class="flex flex-col gap-lg bg-surface-container-lowest shadow-[0px_10px_30px_rgba(17,24,39,0.05)] rounded-xl border border-surface-variant p-lg md:p-xl">
+<!-- AI Assist Button -->
+<div class="flex justify-end w-full">
+<button class="shimmer-bg text-on-primary font-label-md text-label-md px-md py-sm rounded-full flex items-center gap-sm active:scale-95 transition-transform duration-150 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+                    ✨ AI Assist
+                </button>
+</div>
+<!-- Basics -->
+<div class="flex flex-col gap-md">
+<label class="flex flex-col gap-unit">
+<span class="font-label-md text-label-md text-on-surface">Event Title</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-md py-md font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" placeholder="e.g. Neon Nights Indie Fest" type="text"/>
+</label>
+<label class="flex flex-col gap-unit">
+<span class="font-label-md text-label-md text-on-surface">Description</span>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-md py-md font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none placeholder:text-outline" placeholder="What's the vibe? Who's playing?" rows="3"></textarea>
+</label>
+</div>
+<!-- Grid Layout for Date/Time & Location -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<label class="flex flex-col gap-unit">
+<span class="font-label-md text-label-md text-on-surface">City</span>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">location_city</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-xl pr-md py-md font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" placeholder="e.g. Bangalore" type="text"/>
+</div>
+</label>
+<label class="flex flex-col gap-unit">
+<span class="font-label-md text-label-md text-on-surface">Specific Location</span>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">pin_drop</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-xl pr-md py-md font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" placeholder="Venue name or address" type="text"/>
+</div>
+</label>
+<label class="flex flex-col gap-unit">
+<span class="font-label-md text-label-md text-on-surface">Date &amp; Time</span>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">calendar_month</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-xl pr-md py-md font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-on-surface-variant" type="datetime-local"/>
+</div>
+</label>
+</div>
+<hr class="border-surface-variant border-t"/>
+<!-- Category / Identity Selector -->
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-label-md text-on-surface">Event Identity (Choose a vibe)</span>
+<div class="flex flex-wrap gap-sm">
+<!-- Radio inputs styled as chips -->
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="vibe" type="radio"/>
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-lowest border border-outline-variant rounded-xl peer-checked:bg-primary-container peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 transition-all hover:bg-surface-variant">
+<span class="text-headline-sm">🎤</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="vibe" type="radio"/>
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-lowest border border-outline-variant rounded-xl peer-checked:bg-primary-container peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 transition-all hover:bg-surface-variant">
+<span class="text-headline-sm">🏆</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="vibe" type="radio"/>
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-lowest border border-outline-variant rounded-xl peer-checked:bg-primary-container peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 transition-all hover:bg-surface-variant">
+<span class="text-headline-sm">🎨</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="vibe" type="radio"/>
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-lowest border border-outline-variant rounded-xl peer-checked:bg-primary-container peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 transition-all hover:bg-surface-variant">
+<span class="text-headline-sm">💻</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="vibe" type="radio"/>
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-lowest border border-outline-variant rounded-xl peer-checked:bg-primary-container peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 transition-all hover:bg-surface-variant">
+<span class="text-headline-sm">🍜</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="vibe" type="radio"/>
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-lowest border border-outline-variant rounded-xl peer-checked:bg-primary-container peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 transition-all hover:bg-surface-variant">
+<span class="text-headline-sm">🎵</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="vibe" type="radio"/>
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-lowest border border-outline-variant rounded-xl peer-checked:bg-primary-container peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 transition-all hover:bg-surface-variant">
+<span class="text-headline-sm">🎭</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="vibe" type="radio"/>
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-lowest border border-outline-variant rounded-xl peer-checked:bg-primary-container peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/20 transition-all hover:bg-surface-variant">
+<span class="text-headline-sm">🚀</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Submit CTA -->
+<div class="pt-sm">
+<button class="w-full bg-secondary text-on-secondary font-headline-sm text-headline-sm py-md rounded-xl active:scale-95 transition-transform duration-150 shadow-sm flex items-center justify-center gap-sm" type="submit">
+                    Post Event
+                    <span class="material-symbols-outlined">rocket_launch</span>
+</button>
+</div>
+</form>
+<!-- Bottom spacing for mobile nav if needed, though this is a transactional flow -->
+<div class="h-24 md:hidden"></div>
+</main>
+<!-- Bottom Navigation (Mobile) - Suppressed per rules (Transactional / Task Focused page) -->
+</body></html>

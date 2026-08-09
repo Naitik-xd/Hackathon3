@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageMap - Event Detail</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f6eefc",
+                        "primary-fixed-dim": "#d2bbff",
+                        "on-secondary-container": "#fffbff",
+                        "outline-variant": "#ccc3d8",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#ffdad7",
+                        "surface-container-highest": "#e8dfee",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#d2bbff",
+                        "surface-bright": "#fef7ff",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#7c3aed",
+                        "tertiary": "#704500",
+                        "primary": "#630ed4",
+                        "secondary": "#b71422",
+                        "surface": "#fef7ff",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-surface-variant": "#4a4455",
+                        "surface-dim": "#dfd7e6",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-tertiary-container": "#ffe1c0",
+                        "background": "#fef7ff",
+                        "on-secondary-fixed": "#410004",
+                        "surface-variant": "#e8dfee",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "surface-container-low": "#f9f1ff",
+                        "on-surface": "#1d1a24",
+                        "on-background": "#1d1a24",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#25005a",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#732ee4",
+                        "on-secondary-fixed-variant": "#930014",
+                        "on-primary": "#ffffff",
+                        "outline": "#7b7487",
+                        "primary-fixed": "#eaddff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "tertiary-container": "#905b00",
+                        "secondary-container": "#db3237",
+                        "surface-container": "#f3ebfa",
+                        "inverse-surface": "#332f39",
+                        "surface-container-high": "#ede5f4",
+                        "on-primary-container": "#ede0ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "unit": "4px",
+                        "margin-mobile": "20px",
+                        "xs": "4px",
+                        "margin-desktop": "40px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            /* 4px baseline rhythm base */
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .material-symbols-outlined[style*="'FILL' 1"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* High Whitespace & Fluid Grid overrides */
+        .content-canvas {
+            min-height: calc(100vh - 140px); /* Account for TopNav & Footer approx */
+        }
+        
+        /* Interactive scaling */
+        .btn-interactive:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen font-body-md text-body-md">
+<!-- TopNavBar (Web) - Suppressed on Mobile per guidelines -->
+<nav class="hidden md:flex flex-col docked full-width top-0 sticky z-50 bg-surface shadow-sm">
+<div class="flex justify-between items-center w-full px-margin-desktop py-md max-w-7xl mx-auto">
+<div class="font-headline-lg font-black text-primary flex items-center gap-1">
+                StageMap
+            </div>
+<div class="flex items-center gap-lg">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors flex flex-col items-center" href="#">
+                    Discover
+                </a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold flex flex-col items-center" href="#">
+                    Calendar
+                </a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors flex flex-col items-center" href="#">
+                    Saved
+                </a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors flex flex-col items-center" href="#">
+                    Profile
+                </a>
+</div>
+<div class="flex items-center gap-md">
+<button aria-label="Location" class="text-on-surface-variant hover:text-primary transition-colors" data-icon="location_on">
+<span class="material-symbols-outlined text-2xl">location_on</span>
+</button>
+<button aria-label="Notifications" class="text-on-surface-variant hover:text-primary transition-colors" data-icon="notifications">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-grow content-canvas pb-24 md:pb-0 relative">
+<!-- Hero Banner (Emoji Focus) -->
+<section class="w-full relative h-[300px] md:h-[400px] bg-gradient-to-br from-tertiary-fixed to-primary-fixed flex items-center justify-center overflow-hidden">
+<!-- Decorative geometric shapes for vibrancy -->
+<div class="absolute top-[-20%] right-[-10%] w-[50%] h-[150%] bg-white/10 rounded-full blur-3xl transform rotate-12"></div>
+<div class="absolute bottom-[-30%] left-[-10%] w-[60%] h-[100%] bg-primary/10 rounded-full blur-3xl"></div>
+<div class="relative z-10 text-[120px] md:text-[160px] filter drop-shadow-2xl animate-bounce" style="animation-duration: 3s; animation-iteration-count: infinite; animation-timing-function: ease-in-out;">
+                🎤
+            </div>
+<!-- Back button for mobile -->
+<div class="absolute top-margin-mobile left-margin-mobile md:hidden z-20">
+<button class="w-10 h-10 rounded-full bg-surface/80 backdrop-blur-md flex items-center justify-center shadow-sm text-on-surface" onclick="history.back()">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+</div>
+</section>
+<!-- Content Area -->
+<section class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop -mt-8 relative z-20">
+<!-- Main Info Card (Glassmorphism/Level 1) -->
+<div class="bg-surface rounded-xl shadow-[0px_10px_30px_rgba(17,24,39,0.05)] border border-surface-variant p-lg md:p-xl mb-lg">
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-md mb-md">
+<div>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-secondary mr-2 animate-pulse"></span>
+                                Live Music
+                            </span>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
+                                Indie
+                            </span>
+</div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">
+                            Neon Nights: Indie Showcase
+                        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant flex items-center gap-2">
+                            By <span class="font-bold text-primary">SoundScapes BLR</span>
+<span class="material-symbols-outlined text-sm text-primary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span>
+</p>
+</div>
+<!-- Action Button (Desktop priority, reflows on mobile) -->
+<div class="w-full md:w-auto mt-4 md:mt-0 flex-shrink-0">
+<button class="w-full md:w-auto btn-interactive bg-primary text-on-primary font-headline-sm text-headline-sm px-8 py-4 rounded-xl shadow-sm hover:bg-surface-tint transition-colors flex items-center justify-center gap-3">
+                            RSVP Now
+                            <span class="flex items-center gap-1 font-body-sm text-body-sm bg-black/20 px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-sm">group</span>
+                                248
+                            </span>
+</button>
+</div>
+</div>
+<!-- Logistics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md mt-lg border-t border-surface-variant pt-lg">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-2xl">calendar_today</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Friday, Oct 25</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">8:00 PM - 11:30 PM IST</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-2xl">location_on</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Indiranagar Social</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Bengaluru, Karnataka</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Secondary Info -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
+<!-- Attendees (Left Column, Span 2 on Desktop) -->
+<div class="md:col-span-2 bg-surface rounded-xl shadow-[0px_10px_30px_rgba(17,24,39,0.05)] border border-surface-variant p-lg flex flex-col justify-center">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Who's Going</h2>
+<div class="flex items-center gap-2 flex-wrap">
+<!-- Initials circles -->
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm border-2 border-surface shadow-sm z-10 relative">AK</div>
+<div class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-sm border-2 border-surface shadow-sm z-20 -ml-4 relative">RJ</div>
+<div class="w-10 h-10 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center font-bold text-sm border-2 border-surface shadow-sm z-30 -ml-4 relative">SM</div>
+<div class="w-10 h-10 rounded-full bg-primary-fixed-dim text-on-primary-fixed-variant flex items-center justify-center font-bold text-sm border-2 border-surface shadow-sm z-40 -ml-4 relative">NV</div>
+<div class="w-10 h-10 rounded-full bg-secondary-fixed-dim text-on-secondary-fixed-variant flex items-center justify-center font-bold text-sm border-2 border-surface shadow-sm z-50 -ml-4 relative">PK</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-sm border-2 border-surface shadow-sm z-50 -ml-4 relative">+243</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant ml-4">Friends &amp; locals attending</p>
+</div>
+</div>
+<!-- Verification Upload (Right Column) -->
+<div class="bg-surface rounded-xl shadow-[0px_10px_30px_rgba(17,24,39,0.05)] border border-surface-variant p-lg flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-headline-md text-on-surface">Age Check</h2>
+<!-- Status Indicator -->
+<span class="flex items-center gap-1 font-label-md text-label-md text-error bg-error-container px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-sm">cancel</span>
+                            Pending
+                        </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Upload ID certificate to confirm 18+ entry.</p>
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary transition-colors bg-surface-container-lowest flex-grow">
+<span class="material-symbols-outlined text-3xl text-outline mb-2">upload_file</span>
+<span class="font-label-md text-label-md text-primary">Tap to Upload Certificate</span>
+<span class="font-body-sm text-body-sm text-outline-variant mt-1 text-xs">PDF, JPG (Max 5MB)</span>
+</div>
+</div>
+</div>
+<!-- Description / About -->
+<div class="mb-xl">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">About Event</h2>
+<div class="prose prose-sm md:prose-base max-w-none text-on-surface-variant">
+<p class="mb-4">Get ready for an electrifying night as we bring together the city's best underground indie artists. Neon Nights is a celebration of raw talent, experimental sounds, and the vibrant local community.</p>
+<p>Expect an immersive audio-visual experience, curated beverage menus, and a chance to discover your next favorite local band before they hit the mainstream.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface dark:bg-surface-container-low shadow-[0px_-2px_10px_rgba(0,0,0,0.05)] md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-highest rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="explore" data-weight="fill" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-label-md text-label-md mt-1">Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-highest rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-label-md text-label-md mt-1">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-highest rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md mt-1">Me</span>
+</a>
+</nav>
+<!-- Footer (Web) -->
+<footer class="w-full py-xl px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-lg bg-surface-container-lowest hidden md:flex">
+<div class="font-headline-sm text-headline-sm text-primary">
+            StageMap
+        </div>
+<div class="flex gap-md font-body-sm text-body-sm text-on-surface-variant opacity-80">
+<a class="hover:text-primary hover:underline" href="#">About</a>
+<a class="hover:text-primary hover:underline" href="#">Guidelines</a>
+<a class="hover:text-primary hover:underline" href="#">Support</a>
+<a class="hover:text-primary hover:underline" href="#">Privacy</a>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant opacity-80">
+            StageMap © 2024. Made for India with ❤️
+        </div>
+</footer>
+</body></html>

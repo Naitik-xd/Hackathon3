@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FAFAFA;
+  }
+}
+
+@layer utilities {
+  .docked {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+}
