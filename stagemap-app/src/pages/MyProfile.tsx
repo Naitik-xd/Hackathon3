@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import PageTransition from '../components/PageTransition'
 import Layout from '../components/Layout'
-import { Megaphone, CalendarCheck, Edit2, Check, X, LogOut, Camera } from 'lucide-react'
+import { Megaphone, CalendarCheck, Edit2, Check, X, LogOut, Camera, Trash2, ShieldAlert, ShieldCheck, ExternalLink } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { toast } from 'react-hot-toast'
 
@@ -13,8 +13,10 @@ export default function MyProfile() {
   const [stats, setStats] = useState({ posted: 0, attended: 0 })
   const [loading, setLoading] = useState(true)
   const [userEmail, setUserEmail] = useState('')
-  const [_isAdmin, setIsAdmin] = useState(false)
-  const [_adminNotifications, setAdminNotifications] = useState<any[]>([])
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [adminNotifications, setAdminNotifications] = useState<any[]>([])
+  const [unverifiedEvents, setUnverifiedEvents] = useState<any[]>([])
+  const [adminActiveTab, setAdminActiveTab] = useState<'flags' | 'verify'>('flags')
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
@@ -71,7 +73,7 @@ export default function MyProfile() {
       attended: attendedCount || 0
     })
 
-    if (user.email === 'naitik.270810@outlook.com' || user.email === 'naitik.270810@gmail.com') {
+    if (user.email === 'naitik.270810@gmail.com') {
       setIsAdmin(true)
       const { data: notifs } = await supabase
         .from('admin_notifications')
@@ -79,14 +81,55 @@ export default function MyProfile() {
         .eq('is_read', false)
         .order('created_at', { ascending: false })
       if (notifs) setAdminNotifications(notifs)
+      
+      const { data: unverified } = await supabase
+        .from('events')
+        .select('*')
+        .eq('is_verified', false)
+        .order('created_at', { ascending: false })
+      if (unverified) setUnverifiedEvents(unverified)
     }
 
     setLoading(false)
   }
 
-  const _markAsRead = async (id: string) => {
+  const markAsRead = async (id: string) => {
     await supabase.from('admin_notifications').update({ is_read: true }).eq('id', id)
     setAdminNotifications(prev => prev.filter(n => n.id !== id))
+  }
+
+  const handleVerifyEvent = async (id: string) => {
+    const { error } = await supabase.from('events').update({ is_verified: true, report_count: 0 }).eq('id', id)
+    if (!error) {
+      setUnverifiedEvents(prev => prev.filter(e => e.id !== id))
+      toast.success('Event verified')
+    } else {
+      toast.error('Failed to verify event')
+    }
+  }
+
+  const handleDeleteEvent = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) return
+    
+    // First delete saved events references
+    await supabase.from('saved_events').delete().eq('event_id', id)
+    
+    // Then delete rsvp references
+    await supabase.from('rsvp').delete().eq('event_id', id)
+    
+    // Then delete reports
+    await supabase.from('reports').delete().eq('event_id', id)
+    
+    // Finally delete event
+    const { error } = await supabase.from('events').delete().eq('id', id)
+    
+    if (!error) {
+      setUnverifiedEvents(prev => prev.filter(e => e.id !== id))
+      toast.success('Event deleted')
+    } else {
+      toast.error('Failed to delete event')
+      console.error(error)
+    }
   }
 
   const handleSignOut = async () => {
@@ -255,6 +298,118 @@ export default function MyProfile() {
             </motion.div>
 
           </section>
+
+          {/* Admin Panel */}
+          {isAdmin && (
+            <section className="bg-surface border-2 border-primary rounded-xl p-lg shadow-[0px_10px_30px_rgba(124,58,237,0.1)] relative mt-4">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+                <div>
+                  <h2 className="font-headline-md text-headline-md text-primary flex items-center gap-2 font-bold text-xl">
+                    <ShieldCheck size={24} /> 🛡️ Admin Panel
+                  </h2>
+                  <p className="font-body-md text-on-surface-variant mt-1">Logged in as admin · naitik.270810@gmail.com</p>
+                </div>
+                <div className="flex bg-surface-container-lowest border border-outline-variant rounded-lg p-1">
+                  <button
+                    onClick={() => setAdminActiveTab('flags')}
+                    className={`px-4 py-2 rounded-md font-label-md transition-colors relative ${adminActiveTab === 'flags' ? 'bg-primary text-white shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/30'}`}
+                  >
+                    🚩 Flagged Events
+                    {adminNotifications.length > 0 && (
+                      <span className="absolute -top-2 -right-2 w-5 h-5 bg-[#FF4D4D] text-white text-[10px] flex items-center justify-center rounded-full font-bold shadow-sm">
+                        {adminNotifications.length}
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setAdminActiveTab('verify')}
+                    className={`px-4 py-2 rounded-md font-label-md transition-colors ${adminActiveTab === 'verify' ? 'bg-primary text-white shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/30'}`}
+                  >
+                    ✅ Verify Events
+                  </button>
+                </div>
+              </div>
+
+              {adminActiveTab === 'flags' && (
+                <div className="flex flex-col gap-4">
+                  {adminNotifications.length === 0 ? (
+                    <div className="text-center py-8 text-[#10B981] font-bold bg-surface-container-lowest rounded-lg border border-outline-variant/30">🎉 No new flags</div>
+                  ) : (
+                    adminNotifications.map(notif => (
+                      <div key={notif.id} className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4 shadow-sm hover:border-primary/30 transition-colors">
+                        <div className="flex-1">
+                          <p className="font-body-md text-on-surface">{notif.message}</p>
+                          <p className="text-xs text-on-surface-variant mt-2 font-medium">{new Date(notif.created_at).toLocaleString()}</p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <Link 
+                            to={`/event/${notif.event_id}`} 
+                            className="text-primary hover:underline font-label-md flex items-center gap-1 px-3 py-1.5"
+                          >
+                            View Event <ExternalLink size={14} />
+                          </Link>
+                          <button 
+                            onClick={() => markAsRead(notif.id)}
+                            className="bg-surface-variant hover:bg-surface-variant/80 text-on-surface-variant px-3 py-1.5 rounded-md font-label-md flex items-center gap-1 transition-colors"
+                          >
+                            <Check size={16} /> Mark as Read ✓
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {adminActiveTab === 'verify' && (
+                <div className="flex flex-col gap-4">
+                  {unverifiedEvents.length === 0 ? (
+                    <div className="text-center py-8 text-on-surface-variant font-medium bg-surface-container-lowest rounded-lg border border-outline-variant/30">All events are verified!</div>
+                  ) : (
+                    unverifiedEvents.map(ev => (
+                      <div key={ev.id} className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm hover:border-primary/30 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+                            {ev.theme_emoji || '🎭'}
+                          </div>
+                          <div>
+                            <h3 className="font-headline-sm text-on-surface line-clamp-1">{ev.title}</h3>
+                            <p className="font-body-sm text-on-surface-variant mt-1 flex flex-wrap gap-2 items-center">
+                              <span>{ev.city}</span>
+                              <span className="text-outline-variant">•</span>
+                              <span>{new Date(ev.date).toLocaleDateString()}</span>
+                              <span className="text-outline-variant">•</span>
+                              <span className={ev.report_count >= 7 ? "text-[#FF4D4D] font-bold" : ""}>🔴 {ev.report_count || 0} Reports</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Link 
+                            to={`/event/${ev.id}`} 
+                            className="bg-surface-variant hover:bg-surface-variant/80 text-on-surface-variant px-3 py-2 rounded-md flex items-center justify-center transition-colors"
+                          >
+                            <ExternalLink size={18} />
+                          </Link>
+                          <button 
+                            onClick={() => handleVerifyEvent(ev.id)}
+                            className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-2 rounded-md font-label-md flex items-center gap-1 transition-colors"
+                          >
+                            ✅ Verify
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteEvent(ev.id)}
+                            className="bg-[#FF4D4D] hover:bg-[#DC2626] text-white px-4 py-2 rounded-md font-label-md flex items-center gap-1 transition-colors"
+                          >
+                            <Trash2 size={16} /> Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </section>
+          )}
 
           {/* Action Button */}
           <section className="flex justify-center pb-xl">

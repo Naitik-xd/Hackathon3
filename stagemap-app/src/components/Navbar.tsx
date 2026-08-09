@@ -35,6 +35,7 @@ export default function Navbar() {
   const [notifOpen, setNotifOpen] = useState(false)
   const [notifications, setNotifications] = useState<string[]>([])
   const [unread, setUnread] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -68,15 +69,17 @@ export default function Navbar() {
       }
 
       // 3. Admin notifications
-      if (user.email === 'naitik.270810@outlook.com' || user.email === 'naitik.270810@gmail.com') {
+      let adminCount = 0
+      if (user.email === 'naitik.270810@gmail.com') {
         const { count } = await supabase.from('admin_notifications').select('*', { count: 'exact', head: true }).eq('is_read', false)
         if (count && count > 0) {
-          setUnread(true)
+          adminCount = count
+          setUnreadCount(count)
         }
       }
 
       setNotifications(notifs)
-      if (notifs.length > 0) setUnread(true)
+      if (notifs.length > 0 || adminCount > 0) setUnread(true)
     }
     fetchNotifications()
   }, [userCity])
@@ -85,6 +88,7 @@ export default function Navbar() {
     setNotifOpen(!notifOpen)
     if (!notifOpen) {
       setUnread(false)
+      setUnreadCount(0)
     }
   }
 
@@ -190,9 +194,13 @@ export default function Navbar() {
               className="p-2 text-primary hover:bg-surface-container-highest rounded-full transition-colors relative"
             >
               <Bell size={24} />
-              {unread && (
+              {unreadCount > 0 ? (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FF4D4D] text-white text-[10px] flex items-center justify-center rounded-full font-bold shadow-sm border-2 border-surface">
+                  {unreadCount}
+                </span>
+              ) : unread ? (
                 <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-surface"></span>
-              )}
+              ) : null}
             </button>
             <AnimatePresence>
               {notifOpen && (

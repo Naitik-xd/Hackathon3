@@ -58,7 +58,7 @@ export default function Vision() {
               <ul className="space-y-4 text-gray-700 font-body-lg text-lg">
                 <li className="flex gap-4">
                   <span className="shrink-0 text-2xl">📍</span>
-                  <span>BookMyShow, Insider, Paytm Events only list ticketed, commercial events in 8-10 metros</span>
+                  <span>Other apps only list ticketed, commercial events in major metros</span>
                 </li>
                 <li className="flex gap-4">
                   <span className="shrink-0 text-2xl">🎓</span>
@@ -150,7 +150,7 @@ export default function Vision() {
           {/* Closing Quote */}
           <section className="px-margin-mobile md:px-margin-desktop max-w-4xl mx-auto mt-20 text-center">
             <h2 className="font-headline-lg text-3xl md:text-5xl text-primary leading-tight font-medium mb-10">
-              "BookMyShow serves 8 cities. India has 640 districts. StageMap serves the rest."
+              "Other apps focus on major cities. The rest of the world has thousands of communities. StageMap serves the rest."
             </h2>
             <Link 
               to="/explore"

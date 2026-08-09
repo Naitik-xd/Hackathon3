@@ -206,42 +206,81 @@ export default function EventDetail() {
   }
 
   const handleReport = async () => {
-    if (!reportReason) return
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      toast('Sign in to report events')
+    if (!reportReason) {
+      toast.error('Please select a reason')
       return
     }
-    setReportLoading(true)
-    const { error: insertError } = await supabase.from('reports').insert({
-      event_id: id,
-      reported_by: user.id,
-      reason: reportReason
-    })
-    
-    if (!insertError) {
-      const newCount = (eventDetails?.report_count || 0) + 1
-      const updateData: any = { report_count: newCount }
-      if (newCount >= 7) {
-        updateData.is_verified = false
-      }
-      await supabase.from('events').update(updateData).eq('id', id)
+
+    try {
+      setReportLoading(true)
+      const { data: { user } } = await supabase.auth.getUser()
       
-      const { data } = await supabase.from('events').select('*').eq('id', id).single()
-      if (data) {
-        setEventDetails(data)
+      // Insert report
+      const { error: reportError } = await supabase
+        .from('reports')
+        .insert([{
+          event_id: id,
+          reported_by: user?.id ?? 'anonymous',
+          reason: reportReason
+        }])
+
+      if (reportError) {
+        console.error('Report insert error:', reportError)
+        toast.error(reportError.message)
+        return
       }
 
-      await supabase.from('admin_notifications').insert({
-        type: 'event_flagged',
-        message: `Event "${eventDetails.title}" was flagged. Reason: ${reportReason}. Total reports: ${data?.report_count || newCount}`,
-        event_id: id
-      })
-      
-      toast.success('Report submitted. Our team will review this event.')
+      // Get fresh report count
+      const { data: eventData, error: fetchError } = await supabase
+        .from('events')
+        .select('report_count')
+        .eq('id', id)
+        .single()
+
+      if (fetchError) {
+        console.error('Event fetch error:', fetchError)
+        return
+      }
+
+      const newCount = (eventData.report_count ?? 0) + 1
+
+      // Update report count
+      const { error: updateError } = await supabase
+        .from('events')
+        .update({ report_count: newCount })
+        .eq('id', id)
+
+      if (updateError) {
+        console.error('Report count update error:', updateError)
+        toast.error(updateError.message)
+        return
+      }
+
+      // Insert admin notification
+      await supabase
+        .from('admin_notifications')
+        .insert([{
+          type: 'event_flagged',
+          message: `Event "${eventDetails?.title}" was flagged. Reason: ${reportReason}. Total reports: ${newCount}`,
+          event_id: id,
+          is_read: false
+        }])
+
+      // Update local event state
+      setEventDetails((prev: any) => ({ ...prev, report_count: newCount }))
+
+      // Close modal
       setReportModalOpen(false)
+      setReportReason('')
+
+      toast.success('Report submitted. Our team will review this event.')
+
+    } catch (err) {
+      console.error('Unexpected error:', err)
+      toast.error('Something went wrong. Please try again.')
+    } finally {
+      setReportLoading(false)
     }
-    setReportLoading(false)
   }
 
   const isUnderReview = eventDetails?.report_count >= 7
@@ -256,8 +295,19 @@ export default function EventDetail() {
               ⏰ This event has already ended
             </div>
           )}
-          {isUnderReview && !isExpired && (
-            <div className="w-full bg-[#ef4444] text-white font-bold py-2 px-4 text-center z-50 relative">
+          {isUnderReview && (
+            <div style={{
+              background: '#FF4D4D',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: 8,
+              marginBottom: 16,
+              fontWeight: 600,
+              fontSize: 14,
+              textAlign: 'center',
+              position: 'relative',
+              zIndex: 50
+            }}>
               🔴 This event is under review and may not be legitimate. Proceed with caution.
             </div>
           )}
