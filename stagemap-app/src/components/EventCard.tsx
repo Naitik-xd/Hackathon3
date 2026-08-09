@@ -15,6 +15,8 @@ export interface EventProps {
   emoji: string
   bgClass: string
   isLive?: boolean
+  is_verified?: boolean
+  reportCount?: number
 }
 
 export default function EventCard({ event }: { event: EventProps }) {
@@ -75,7 +77,11 @@ export default function EventCard({ event }: { event: EventProps }) {
   return (
     <motion.article 
       whileHover={{ scale: 1.02, y: -4 }}
-      className="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-[0px_10px_30px_rgba(17,24,39,0.05)] overflow-hidden flex flex-col relative"
+      className={`bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(17,24,39,0.05)] overflow-hidden flex flex-col relative ${
+        (event.reportCount ?? 0) >= 7 ? 'border-2 border-[#ef4444] opacity-90' 
+        : event.is_verified ? 'border-2 border-[#10B981]' 
+        : 'border border-outline-variant/30'
+      }`}
     >
       <button 
         onClick={handleSave}
@@ -88,6 +94,14 @@ export default function EventCard({ event }: { event: EventProps }) {
           fill={isSaved ? "#7C3AED" : "none"}
         />
       </button>
+
+      {((event.reportCount ?? 0) >= 7 || event.is_verified) && (
+        <div className={`absolute top-4 left-16 z-10 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm flex items-center gap-1 ${
+          (event.reportCount ?? 0) >= 7 ? 'bg-[#ef4444]' : 'bg-[#10B981]'
+        }`}>
+          {(event.reportCount ?? 0) >= 7 ? '🔴 Under Review' : '✅ Verified'}
+        </div>
+      )}
 
       <div className={`h-40 ${event.bgClass} flex items-center justify-center relative`}>
         <span className="text-6xl">{event.emoji}</span>

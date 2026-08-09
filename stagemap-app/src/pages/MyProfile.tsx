@@ -13,6 +13,8 @@ export default function MyProfile() {
   const [stats, setStats] = useState({ posted: 0, attended: 0 })
   const [loading, setLoading] = useState(true)
   const [userEmail, setUserEmail] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [adminNotifications, setAdminNotifications] = useState<any[]>([])
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
@@ -69,7 +71,22 @@ export default function MyProfile() {
       attended: attendedCount || 0
     })
 
+    if (user.email === 'naitik.270810@outlook.com' || user.email === 'naitik.270810@gmail.com') {
+      setIsAdmin(true)
+      const { data: notifs } = await supabase
+        .from('admin_notifications')
+        .select('*')
+        .eq('is_read', false)
+        .order('created_at', { ascending: false })
+      if (notifs) setAdminNotifications(notifs)
+    }
+
     setLoading(false)
+  }
+
+  const markAsRead = async (id: string) => {
+    await supabase.from('admin_notifications').update({ is_read: true }).eq('id', id)
+    setAdminNotifications(prev => prev.filter(n => n.id !== id))
   }
 
   const handleSignOut = async () => {
@@ -150,8 +167,10 @@ export default function MyProfile() {
               </button>
             </div>
 
+
+
             <div 
-              className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-xl text-headline-xl shadow-[0px_10px_30px_rgba(17,24,39,0.05)] cursor-pointer relative group overflow-hidden"
+              className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-xl text-headline-xl shadow-[0px_10px_30px_rgba(17,24,39,0.05)] cursor-pointer relative group overflow-hidden mt-8"
               onClick={() => fileInputRef.current?.click()}
             >
               {profile?.avatar_url ? (
@@ -235,7 +254,6 @@ export default function MyProfile() {
               <div className="font-label-md text-label-md text-on-surface-variant uppercase">Events Attended</div>
             </motion.div>
 
-            </motion.div>
           </section>
 
           {/* Action Button */}

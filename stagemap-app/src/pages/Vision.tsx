@@ -100,6 +100,14 @@ export default function Vision() {
                   <span>No commercial gatekeeping — no listing fees, no metro-only bias</span>
                 </li>
                 <li className="flex gap-4">
+                  <span className="shrink-0 text-2xl">🚩</span>
+                  <span>Community-powered reporting — 7 reports triggers an automatic review flag</span>
+                </li>
+                <li className="flex gap-4">
+                  <span className="shrink-0 text-2xl">✅</span>
+                  <span>Admin-verified events get a trust badge — so attendees always know what's real</span>
+                </li>
+                <li className="flex gap-4">
                   <span className="shrink-0 text-2xl">✅</span>
                   <span>Proof of attendance — RSVP and get a verified digital entry pass with a unique QR code</span>
                 </li>

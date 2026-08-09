@@ -1,17 +1,15 @@
+import { Link } from 'react-router-dom'
+
 export default function Footer() {
   return (
-    <footer className="w-full py-xl px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-lg bg-surface-container-lowest mb-20 md:mb-0 mt-auto">
-      <div className="font-headline-sm text-headline-sm text-primary">
-        StageMap ❤️
-      </div>
-      <div className="flex flex-wrap justify-center gap-lg">
-        <a className="text-on-surface-variant opacity-80 hover:text-primary hover:underline font-body-sm text-body-sm" href="#">About</a>
-        <a className="text-on-surface-variant opacity-80 hover:text-primary hover:underline font-body-sm text-body-sm" href="#">Guidelines</a>
-        <a className="text-on-surface-variant opacity-80 hover:text-primary hover:underline font-body-sm text-body-sm" href="#">Support</a>
-        <a className="text-on-surface-variant opacity-80 hover:text-primary hover:underline font-body-sm text-body-sm" href="#">Privacy</a>
-      </div>
-      <div className="font-body-sm text-body-sm text-on-surface-variant">
-        StageMap © 2024. Made for India with ❤️
+    <footer className="w-full bg-white border-t border-[#F3F4F6] py-8 mt-auto z-10 relative">
+      <div className="max-w-4xl mx-auto px-6 text-center flex flex-col gap-4">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+          <Link to="/vision" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">About</Link>
+          <Link to="/guidelines" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Guidelines</Link>
+          <Link to="/privacy" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Privacy Policy</Link>
+          <Link to="/support" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Support</Link>
+        </div>
       </div>
     </footer>
   )

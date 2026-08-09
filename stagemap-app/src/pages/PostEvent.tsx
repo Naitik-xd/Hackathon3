@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, MapPin, Map, Calendar as CalendarIcon, Plus, Minus, Search, Check } from 'lucide-react'
-import { MapContainer, TileLayer, Marker } from 'react-leaflet'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+import { Sparkles, MapPin, Map, Calendar as CalendarIcon, Plus, Minus, Check } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
 import Layout from '../components/Layout'
 import { GoogleGenAI, Type } from '@google/genai'
@@ -39,43 +36,16 @@ export default function PostEvent() {
   const navigate = useNavigate()
   const location = useLocation()
   const [loading, setLoading] = useState(false)
-  const [guestCount, setGuestCount] = useState(1)
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
-  
-  // Venue Search State
-  const [venueSearch, setVenueSearch] = useState('')
-  const [venueResults, setVenueResults] = useState<any[]>([])
-  const [selectedVenue, setSelectedVenue] = useState<{name: string, lat: number, lng: number} | null>(null)
-  
+
   useEffect(() => {
-    if (venueSearch.length < 3) {
-      setVenueResults([])
-      return
+    const catchErrors = (event: ErrorEvent) => {
+      console.error("Caught error in PostEvent:", event.error)
     }
-
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(venueSearch)}&countrycodes=in&format=json&limit=5`, {
-          headers: { 'Accept-Language': 'en' }
-        })
-        const results = await res.json()
-        setVenueResults(results)
-      } catch (err) {
-        console.error('Nominatim error:', err)
-      }
-    }, 500)
-    
-    return () => clearTimeout(timer)
-  }, [venueSearch])
-
-  // Custom Icon for Mini Map
-  const customIcon = new L.DivIcon({
-    html: `<div style="font-size: 24px;">📍</div>`,
-    className: 'custom-venue-pin',
-    iconSize: [24, 24],
-    iconAnchor: [12, 24]
-  })
+    window.addEventListener('error', catchErrors)
+    return () => window.removeEventListener('error', catchErrors)
+  }, [])
 
   const [formData, setFormData] = useState({
     title: '',
@@ -139,17 +109,22 @@ export default function PostEvent() {
         theme_emoji: getEmojiForCategory(formData.category),
         created_by: user?.id ?? null,
         rsvp_count: 0,
-        guest_count: guestCount,
-        venue_name: selectedVenue?.name ?? null,
-        location_lat: selectedVenue?.lat ?? null, 
-        location_lng: selectedVenue?.lng ?? null
+        venue_name: formData.location || null,
+        location_lat: null, 
+        location_lng: null
       }
 
-      const { data, error } = await supabase.from('events').insert(insertData)
+      const { data, error } = await supabase.from('events').insert(insertData).select()
       
       console.log("Supabase Insert Response:", { data, error })
 
       if (error) throw error
+
+      if (data && data[0]) {
+        const postedEvents = JSON.parse(localStorage.getItem('my_posted_events') || '[]')
+        postedEvents.push(data[0].id)
+        localStorage.setItem('my_posted_events', JSON.stringify(postedEvents))
+      }
 
       toast.success("🎉 Event posted!")
       navigate('/explore')
@@ -282,77 +257,17 @@ export default function PostEvent() {
               </label>
               
               <label className="flex flex-col gap-unit">
-                <span className="font-label-md text-label-md text-on-surface">Specific Location</span>
+                <span className="font-label-md text-label-md text-on-surface">Specific Location / Venue</span>
                 <div className="relative">
-                  <Search className="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" size={20} />
+                  <MapPin className="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" size={20} />
                   <input 
-                    value={venueSearch}
-                    onChange={(e) => {
-                      setVenueSearch(e.target.value)
-                      setSelectedVenue(null) // clear on edit
-                    }}
+                    value={formData.location}
+                    onChange={(e) => setFormData({...formData, location: e.target.value})}
                     className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-xl pr-md py-md font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" 
-                    placeholder="Search venue or address..." 
+                    placeholder="e.g. District Ground, Main Market, College Auditorium, Near Bus Stand" 
                     type="text"
                   />
-                  
-                  <AnimatePresence>
-                    {venueResults.length > 0 && !selectedVenue && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 5 }}
-                        className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 max-h-60 overflow-y-auto"
-                      >
-                        {venueResults.map((res: any, idx: number) => (
-                          <div 
-                            key={idx}
-                            onClick={() => {
-                              setSelectedVenue({
-                                name: res.display_name.split(',')[0],
-                                lat: parseFloat(res.lat),
-                                lng: parseFloat(res.lon)
-                              })
-                              setVenueSearch('')
-                              setVenueResults([])
-                            }}
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-start gap-3 border-b border-gray-50 last:border-0"
-                          >
-                            <MapPin className="text-primary shrink-0 mt-0.5" size={18} />
-                            <div>
-                              <p className="font-semibold text-sm text-gray-900">{res.display_name.split(',')[0]}</p>
-                              <p className="text-xs text-gray-500 line-clamp-1">{res.display_name}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
-
-                {selectedVenue && (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="mt-3 flex flex-col gap-3"
-                  >
-                    <div className="inline-flex items-center gap-2 bg-[#7C3AED]/10 text-[#7C3AED] px-3 py-1.5 rounded-full text-sm font-medium border border-[#7C3AED]/20 self-start">
-                      <span>📍 {selectedVenue.name}</span>
-                      <Check size={14} />
-                    </div>
-                    <div className="w-full h-[200px] rounded-xl overflow-hidden border border-outline-variant relative z-0">
-                      <MapContainer 
-                        center={[selectedVenue.lat, selectedVenue.lng]} 
-                        zoom={15} 
-                        className="w-full h-full"
-                        zoomControl={false}
-                      >
-                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                        <Marker position={[selectedVenue.lat, selectedVenue.lng]} icon={customIcon} />
-                      </MapContainer>
-                    </div>
-                  </motion.div>
-                )}
               </label>
               
               <label className="flex flex-col gap-unit">
@@ -370,40 +285,6 @@ export default function PostEvent() {
               </label>
             </div>
 
-            <div className="grid grid-cols-1 gap-md">
-              <label className="flex flex-col gap-unit">
-                <span className="font-label-md text-label-md text-on-surface">How many are you bringing? (including yourself)</span>
-                <div className="flex items-center gap-4 mt-1">
-                  <button
-                    type="button"
-                    onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
-                    disabled={guestCount <= 1}
-                    className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      guestCount <= 1 
-                        ? 'border-gray-300 bg-white text-gray-300 cursor-not-allowed' 
-                        : 'border-[#7C3AED] bg-white text-[#7C3AED] hover:bg-gray-50'
-                    }`}
-                  >
-                    <Minus size={20} />
-                  </button>
-                  <span className="font-bold text-[20px] text-[#7C3AED] w-4 text-center">{guestCount}</span>
-                  <button
-                    type="button"
-                    onClick={() => setGuestCount(Math.min(10, guestCount + 1))}
-                    disabled={guestCount >= 10}
-                    className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      guestCount >= 10 
-                        ? 'border-gray-300 bg-white text-gray-300 cursor-not-allowed' 
-                        : 'border-[#7C3AED] bg-white text-[#7C3AED] hover:bg-gray-50'
-                    }`}
-                  >
-                    <Plus size={20} />
-                  </button>
-                </div>
-              </label>
-            </div>
-
-            <hr className="border-surface-variant border-t" />
 
             <div className="flex flex-col gap-sm">
               <span className="font-label-md text-label-md text-on-surface">Event Identity (Choose a vibe)</span>

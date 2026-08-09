@@ -72,11 +72,11 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-surface flex items-center justify-center px-4 py-8 font-body-md text-on-surface">
+    <div className="min-h-[100dvh] bg-surface flex items-center justify-center px-0 py-8 font-body-md text-on-surface">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-surface-container-lowest rounded-2xl shadow-[0px_10px_40px_rgba(17,24,39,0.08)] border border-surface-variant p-8 md:p-10 flex flex-col items-center"
+        className="w-[90%] md:w-full max-w-md bg-surface-container-lowest rounded-2xl shadow-[0px_10px_40px_rgba(17,24,39,0.08)] border border-surface-variant p-8 md:p-10 flex flex-col items-center"
       >
         <div className="font-headline-lg font-black text-primary flex items-center gap-1 mb-8 text-3xl">
           StageMap <span className="text-4xl">📍</span>

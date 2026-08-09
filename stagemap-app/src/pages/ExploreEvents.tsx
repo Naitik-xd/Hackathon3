@@ -35,7 +35,7 @@ export default function ExploreEvents() {
 
   const fetchEvents = async () => {
     setLoading(true)
-    const { data, error } = await supabase.from('events').select('*').order('date', { ascending: true })
+    const { data, error } = await supabase.from('events').select('*').eq('is_expired', false).lt('report_count', 7).order('date', { ascending: true })
     if (error) {
       console.error(error)
     } else if (data) {
@@ -50,7 +50,9 @@ export default function ExploreEvents() {
         rsvpCount: evt.rsvp_count?.toString() || '0',
         emoji: evt.theme_emoji || '🎪',
         bgClass: CATEGORY_COLORS[evt.category] || 'bg-surface-variant',
-        isLive: evt.date ? isToday(parseISO(evt.date)) : false
+        isLive: evt.date ? isToday(parseISO(evt.date)) : false,
+        is_verified: evt.is_verified,
+        reportCount: evt.report_count || 0
       }))
       setEvents(formatted)
       
@@ -62,6 +64,9 @@ export default function ExploreEvents() {
 
   // Filtering
   const filteredEvents = events.filter(evt => {
+    // Expiration filter
+    if (evt.rawDate && new Date(evt.rawDate) <= new Date()) return false
+
     // City filter
     if (activeCity !== 'All Cities' && evt.location !== activeCity) return false
     

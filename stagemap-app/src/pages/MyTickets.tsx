@@ -35,10 +35,34 @@ interface TicketProps {
   userId: string
   locationLat?: number
   locationLng?: number
+  venueName?: string
 }
 
-function TicketCard({ ticket }: { ticket: TicketProps }) {
+const TicketCard = ({ ticket, userId }: { ticket: TicketProps, userId: string }) => {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('')
+
+  const shareTicket = async () => {
+    const ticketUrl = `https://stagemap.vercel.app/ticket-verify/${ticket.id}/${userId}`
+    const shareData = {
+      title: `My ticket for ${ticket.title}`,
+      text: `I'm attending ${ticket.title} on ${new Date(ticket.date).toLocaleDateString('en-IN')} at ${ticket.city}! 🎉`,
+      url: ticketUrl
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        console.log('Share cancelled')
+      }
+    } else {
+      // Fallback: copy to clipboard
+      await navigator.clipboard.writeText(`${shareData.text}\n${ticketUrl}`)
+      import('react-hot-toast').then(({ toast }) => {
+        toast.success('Ticket link copied to clipboard!')
+      })
+    }
+  }
   
   useEffect(() => {
     const generateQR = async () => {
@@ -55,11 +79,12 @@ function TicketCard({ ticket }: { ticket: TicketProps }) {
   const colorHex = CATEGORY_COLORS[ticket.category] || '#94a3b8'
   const bgClass = CATEGORY_BG_CLASSES[ticket.category] || 'bg-surface-variant'
   const formattedDate = ticket.date ? format(parseISO(ticket.date), 'EEE, MMM d, yyyy • h:mm a') : 'TBA'
+  const isExpired = ticket.date ? new Date(ticket.date) < new Date() : false
 
   return (
     <motion.div 
-      whileHover={{ scale: 1.02 }}
-      className="relative bg-white rounded-2xl shadow-[0px_10px_30px_rgba(17,24,39,0.1)] overflow-hidden flex flex-col md:flex-row mb-8 border-l-4"
+      whileHover={isExpired ? {} : { scale: 1.02 }}
+      className={`relative bg-white md:rounded-2xl shadow-[0px_10px_30px_rgba(17,24,39,0.1)] overflow-hidden flex flex-col md:flex-row mb-8 border-l-4 ${isExpired ? 'opacity-60 grayscale' : ''}`}
       style={{ borderLeftColor: colorHex }}
     >
       {/* Top / Left Section (Emoji & Gradient) */}
@@ -81,9 +106,9 @@ function TicketCard({ ticket }: { ticket: TicketProps }) {
             <p>📍 {ticket.city}</p>
             <p>🕒 {formattedDate}</p>
           </div>
-          {ticket.locationLat && ticket.locationLng && (
+          {ticket.venueName && (
             <button 
-              onClick={() => window.open(`https://www.openstreetmap.org/directions?to=${ticket.locationLat},${ticket.locationLng}`, '_blank')}
+              onClick={() => window.open(`https://www.openstreetmap.org/search?query=${encodeURIComponent(ticket.venueName + ' ' + ticket.city + ' India')}`, '_blank')}
               className="mt-3 self-start text-[#7C3AED] hover:bg-[#7C3AED]/10 text-sm font-semibold px-3 py-1.5 rounded-full border border-[#7C3AED]/20 transition-colors flex items-center gap-1"
             >
               🗺️ Get Directions
@@ -107,14 +132,25 @@ function TicketCard({ ticket }: { ticket: TicketProps }) {
             </div>
             
             <div className="flex flex-col items-center">
-              {qrCodeUrl ? (
-                <img src={qrCodeUrl} alt="QR Code" className="w-20 h-20 md:w-24 md:h-24 rounded-md border border-gray-100 p-1" />
+              {isExpired ? (
+                <div className="w-[150px] h-[150px] md:w-24 md:h-24 bg-emerald-50 rounded-md border border-emerald-100 flex items-center justify-center p-2 text-center">
+                  <span className="text-emerald-600 font-bold text-sm">Completed ✅</span>
+                </div>
+              ) : qrCodeUrl ? (
+                <img src={qrCodeUrl} alt="QR Code" className="w-[150px] h-[150px] md:w-24 md:h-24 rounded-md border border-gray-100 p-1" />
               ) : (
-                <div className="w-20 h-20 bg-gray-100 rounded-md animate-pulse"></div>
+                <div className="w-[150px] h-[150px] md:w-24 md:h-24 bg-gray-100 rounded-md animate-pulse"></div>
               )}
-              <span className="text-[10px] text-gray-400 mt-2">Scan at venue</span>
+              <span className="text-[10px] text-gray-400 mt-2">{isExpired ? 'Event has ended' : 'Scan at venue'}</span>
             </div>
           </div>
+
+          <button 
+            onClick={shareTicket}
+            className="w-full mt-6 py-3 px-4 border border-[#7C3AED] text-[#7C3AED] hover:bg-[#7C3AED]/10 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors text-sm"
+          >
+            🔗 Share Ticket
+          </button>
         </div>
       </div>
     </motion.div>
@@ -147,7 +183,7 @@ export default function MyTickets() {
         id,
         event_id,
         events (
-          title, category, city, date, theme_emoji, location_lat, location_lng
+          title, category, city, date, theme_emoji, location_lat, location_lng, venue_name
         )
       `)
       .eq('user_id', user.id)
@@ -167,7 +203,8 @@ export default function MyTickets() {
           emoji: ev?.theme_emoji || '🎫',
           userId: user.id,
           locationLat: ev?.location_lat,
-          locationLng: ev?.location_lng
+          locationLng: ev?.location_lng,
+          venueName: ev?.venue_name
         }
       })
       setTickets(formatted)
@@ -179,8 +216,8 @@ export default function MyTickets() {
   return (
     <PageTransition>
       <Layout>
-        <div className="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-lg pb-[100px] bg-[#F9FAFB] min-h-screen">
-          <h1 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-gray-900 mb-8 pt-8">
+        <div className="flex-1 w-full max-w-4xl mx-auto px-0 md:px-margin-desktop py-lg pb-[100px] bg-[#F9FAFB] min-h-screen">
+          <h1 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-gray-900 mb-8 pt-8 px-margin-mobile md:px-0">
             My Tickets 🎟️
           </h1>
 
@@ -191,7 +228,7 @@ export default function MyTickets() {
           ) : tickets.length > 0 ? (
             <div className="flex flex-col gap-4">
               {tickets.map(ticket => (
-                <TicketCard key={ticket.id} ticket={ticket} />
+                <TicketCard key={ticket.id} ticket={ticket} userId={userId} />
               ))}
             </div>
           ) : (

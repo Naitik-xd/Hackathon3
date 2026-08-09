@@ -67,6 +67,14 @@ export default function Navbar() {
         }
       }
 
+      // 3. Admin notifications
+      if (user.email === 'naitik.270810@outlook.com' || user.email === 'naitik.270810@gmail.com') {
+        const { count } = await supabase.from('admin_notifications').select('*', { count: 'exact', head: true }).eq('is_read', false)
+        if (count && count > 0) {
+          setUnread(true)
+        }
+      }
+
       setNotifications(notifs)
       if (notifs.length > 0) setUnread(true)
     }
@@ -229,33 +237,69 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="absolute top-full left-0 w-full bg-surface border-b border-surface-variant shadow-lg md:hidden overflow-hidden z-[90]"
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 bg-white z-[100] flex flex-col md:hidden"
           >
-            <div className="flex flex-col py-2">
-              {navLinks.map((link) => {
-                const isActive = location.pathname.includes(link.path)
-                return (
-                  <Link
-                    key={link.name}
-                    to={link.path}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`h-12 flex items-center px-margin-mobile text-lg font-semibold transition-colors ${
-                      isActive
-                        ? 'bg-primary/10 text-primary border-l-4 border-primary'
-                        : 'text-on-surface hover:bg-surface-variant border-l-4 border-transparent'
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                )
-              })}
+            <div className="flex justify-between items-center px-margin-mobile py-md border-b border-gray-100">
+              <span className="font-headline-lg-mobile font-black text-primary">StageMap 📍</span>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 text-on-surface"
+              >
+                <X size={32} />
+              </button>
+            </div>
+            
+            <div className="flex flex-col px-margin-mobile py-8 flex-grow">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="h-[56px] flex items-center text-[18px] font-bold text-gray-900 border-b border-gray-50"
+                  style={{ fontFamily: 'Plus Jakarta Sans' }}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+            
+            <div className="p-margin-mobile pb-12">
+              <button 
+                onClick={() => {
+                  setCityOpen(!cityOpen)
+                  // Don't close mobile menu here, let them select city
+                }}
+                className="w-full py-4 text-primary hover:bg-surface-container-highest rounded-xl transition-colors flex items-center justify-center gap-2 font-semibold text-lg border border-primary/20 mb-4"
+              >
+                <MapPin size={24} />
+                {userCity || 'Select City'}
+              </button>
+              
+              {cityOpen && (
+                <div className="bg-gray-50 rounded-xl p-4 mb-4 grid grid-cols-2 gap-2">
+                  {cities.map(city => (
+                    <button
+                      key={city}
+                      onClick={() => {
+                        handleCitySelect(city)
+                        setMobileMenuOpen(false)
+                      }}
+                      className={`text-center py-2 px-2 text-sm rounded-lg transition-colors ${
+                        userCity === city ? 'bg-primary text-white font-bold' : 'bg-white text-gray-700 border border-gray-200'
+                      }`}
+                    >
+                      {city}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
