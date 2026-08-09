@@ -223,7 +223,7 @@ export default function MyTickets() {
             venueName: ev?.venue_name
           }
         })
-        .filter((item): item is TicketProps => item !== null)
+        .filter(Boolean) as TicketProps[]
       setTickets(formatted)
     }
     
