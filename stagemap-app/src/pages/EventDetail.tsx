@@ -185,15 +185,65 @@ export default function EventDetail() {
     if (!confirmDelete) return
 
     setDeleting(true)
-    const { error } = await supabase.from('events').delete().eq('id', id)
-    setDeleting(false)
+    try {
+      // Step 1: Delete related rsvp rows first
+      const { error: rsvpError } = await supabase
+        .from('rsvp')
+        .delete()
+        .eq('event_id', id)
 
-    if (error) {
-      toast.error("Failed to delete event.")
-      console.error(error)
-    } else {
-      toast.success("Event deleted.")
+      if (rsvpError) console.error('RSVP delete error:', rsvpError)
+
+      // Step 2: Delete related saved_events rows
+      const { error: savedError } = await supabase
+        .from('saved_events')
+        .delete()
+        .eq('event_id', id)
+
+      if (savedError) console.error('Saved events delete error:', savedError)
+
+      // Step 3: Delete related reports rows
+      const { error: reportsError } = await supabase
+        .from('reports')
+        .delete()
+        .eq('event_id', id)
+
+      if (reportsError) console.error('Reports delete error:', reportsError)
+
+      // Step 4: Delete related admin_notifications rows
+      const { error: notifError } = await supabase
+        .from('admin_notifications')
+        .delete()
+        .eq('event_id', id)
+
+      if (notifError) console.error('Notifications delete error:', notifError)
+
+      // Step 5: Finally delete the event itself
+      const { error: eventError } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id)
+
+      if (eventError) {
+        console.error('Event delete error:', eventError)
+        toast.error(eventError.message)
+        setDeleting(false)
+        return
+      }
+
+      // Step 6: Remove from localStorage posted events
+      const myPostedEvents = JSON.parse(localStorage.getItem('my_posted_events') || '[]')
+      const updated = myPostedEvents.filter((eventId: string) => eventId !== id)
+      localStorage.setItem('my_posted_events', JSON.stringify(updated))
+
+      toast.success('Event deleted successfully')
       navigate('/explore')
+
+    } catch (err) {
+      console.error('Unexpected delete error:', err)
+      toast.error('Failed to delete event. Please try again.')
+    } finally {
+      setDeleting(false)
     }
   }
 

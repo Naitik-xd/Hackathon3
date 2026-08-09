@@ -10,6 +10,9 @@ export default function Footer() {
           <Link to="/privacy" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Privacy Policy</Link>
           <Link to="/support" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Support</Link>
         </div>
+        <div className="text-[#9CA3AF] text-xs mt-4">
+          Map data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="hover:underline">OpenStreetMap</a> contributors
+        </div>
       </div>
     </footer>
   )
