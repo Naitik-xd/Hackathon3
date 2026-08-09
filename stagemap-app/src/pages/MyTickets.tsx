@@ -42,7 +42,7 @@ const TicketCard = ({ ticket, userId }: { ticket: TicketProps, userId: string })
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('')
 
   const shareTicket = async () => {
-    const ticketUrl = `https://stagemap.vercel.app/ticket-verify/${ticket.id}/${userId}`
+    const ticketUrl = `https://na1t1k-hackathon3.vercel.app/ticket-verify/${ticket.id}/${userId}`
     const shareData = {
       title: `My ticket for ${ticket.title}`,
       text: `I'm attending ${ticket.title} on ${new Date(ticket.date).toLocaleDateString('en-IN')} at ${ticket.city}! 🎉`,
@@ -67,7 +67,7 @@ const TicketCard = ({ ticket, userId }: { ticket: TicketProps, userId: string })
   useEffect(() => {
     const generateQR = async () => {
       try {
-        const url = await QRCode.toDataURL(`https://stagemap.vercel.app/ticket-verify/${ticket.event_id}/${ticket.userId}`)
+        const url = await QRCode.toDataURL(`https://na1t1k-hackathon3.vercel.app/ticket-verify/${ticket.event_id}/${ticket.userId}`)
         setQrCodeUrl(url)
       } catch (err) {
         console.error(err)

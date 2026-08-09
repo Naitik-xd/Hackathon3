@@ -25,7 +25,7 @@ export default function Auth() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/explore'
+        redirectTo: 'https://na1t1k-hackathon3.vercel.app/explore'
       }
     })
     if (error) setErrorMsg(error.message)
