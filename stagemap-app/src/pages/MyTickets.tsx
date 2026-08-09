@@ -212,7 +212,7 @@ export default function MyTickets() {
           }
         })
         .filter(Boolean)
-      setTickets(formatted)
+      setTickets(formatted as TicketProps[])
     }
     
     setLoading(false)
