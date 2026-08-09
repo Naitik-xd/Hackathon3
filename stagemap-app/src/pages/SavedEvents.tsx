@@ -31,21 +31,35 @@ export default function SavedEvents() {
       return
     }
 
-    const { data, error } = await supabase
+    const { data: savedData, error: savedError } = await supabase
       .from('saved_events')
-      .select(`
-        event_id,
-        events (*)
-      `)
+      .select('*')
       .eq('user_id', user.id)
 
-    if (error) {
-      console.error(error)
-    } else if (data) {
-      const formatted = data
-        .filter((saved: any) => saved.events)
+    if (savedError) {
+      console.error(savedError)
+      setLoading(false)
+      return
+    }
+
+    if (!savedData || savedData.length === 0) {
+      setEvents([])
+      setLoading(false)
+      return
+    }
+
+    const eventIds = savedData.map((s: any) => s.event_id)
+    const { data: eventsData, error: eventsError } = await supabase
+      .from('events')
+      .select('*')
+      .in('id', eventIds)
+
+    if (eventsError) {
+      console.error(eventsError)
+    } else if (eventsData) {
+      const formatted = savedData
         .map((saved: any) => {
-          const evt = Array.isArray(saved.events) ? saved.events[0] : saved.events
+          const evt = eventsData.find((e: any) => e.id === saved.event_id)
           if (!evt) return null
           
           return {

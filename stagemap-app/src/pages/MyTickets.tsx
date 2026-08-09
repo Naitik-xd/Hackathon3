@@ -176,25 +176,37 @@ export default function MyTickets() {
     
     setUserId(user.id)
 
-    // Join rsvp with events
-    const { data, error } = await supabase
+    // Fetch RSVPs first
+    const { data: rsvpData, error: rsvpError } = await supabase
       .from('rsvp')
-      .select(`
-        id,
-        event_id,
-        events (
-          title, category, city, date, theme_emoji, location_lat, location_lng, venue_name
-        )
-      `)
+      .select('*')
       .eq('user_id', user.id)
 
-    if (error) {
-      console.error(error)
-    } else if (data) {
-      const formatted = data
-        .filter((rsvp: any) => rsvp.events)
+    if (rsvpError) {
+      console.error(rsvpError)
+      setLoading(false)
+      return
+    }
+
+    if (!rsvpData || rsvpData.length === 0) {
+      setTickets([])
+      setLoading(false)
+      return
+    }
+
+    // Fetch matching events
+    const eventIds = rsvpData.map((r: any) => r.event_id)
+    const { data: eventsData, error: eventsError } = await supabase
+      .from('events')
+      .select('title, category, city, date, theme_emoji, location_lat, location_lng, venue_name, id')
+      .in('id', eventIds)
+
+    if (eventsError) {
+      console.error(eventsError)
+    } else if (eventsData) {
+      const formatted = rsvpData
         .map((rsvp: any) => {
-          const ev = Array.isArray(rsvp.events) ? rsvp.events[0] : rsvp.events;
+          const ev = eventsData.find((e: any) => e.id === rsvp.event_id);
           if (!ev) return null;
           
           return {
@@ -211,8 +223,8 @@ export default function MyTickets() {
             venueName: ev?.venue_name
           }
         })
-        .filter(Boolean)
-      setTickets(formatted as TicketProps[])
+        .filter((item): item is TicketProps => item !== null)
+      setTickets(formatted)
     }
     
     setLoading(false)
