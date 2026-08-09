@@ -42,21 +42,26 @@ export default function SavedEvents() {
     if (error) {
       console.error(error)
     } else if (data) {
-      const formatted = data.map((saved: any) => {
-        const evt = saved.events
-        return {
-          id: evt.id,
-          title: evt.title,
-          category: evt.category,
-          location: evt.city,
-          time: evt.date ? new Date(evt.date).toLocaleString('en-US', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : 'TBA',
-          rawDate: evt.date,
-          rsvpCount: evt.rsvp_count?.toString() || '0',
-          emoji: evt.theme_emoji || '🎪',
-          bgClass: CATEGORY_COLORS[evt.category] || 'bg-surface-variant',
-          isLive: evt.date ? isToday(parseISO(evt.date)) : false
-        }
-      })
+      const formatted = data
+        .filter((saved: any) => saved.events)
+        .map((saved: any) => {
+          const evt = Array.isArray(saved.events) ? saved.events[0] : saved.events
+          if (!evt) return null
+          
+          return {
+            id: evt.id,
+            title: evt.title,
+            category: evt.category,
+            location: evt.city,
+            time: evt.date ? new Date(evt.date).toLocaleString('en-US', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : 'TBA',
+            rawDate: evt.date,
+            rsvpCount: evt.rsvp_count?.toString() || '0',
+            emoji: evt.theme_emoji || '🎪',
+            bgClass: CATEGORY_COLORS[evt.category] || 'bg-surface-variant',
+            isLive: evt.date ? isToday(parseISO(evt.date)) : false
+          }
+        })
+        .filter(Boolean)
       setEvents(formatted)
     }
     setLoading(false)

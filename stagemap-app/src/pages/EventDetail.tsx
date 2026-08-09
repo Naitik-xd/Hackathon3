@@ -338,7 +338,7 @@ export default function EventDetail() {
   return (
     <PageTransition>
       <Layout>
-        <div className="flex-grow content-canvas pb-24 md:pb-0 relative">
+        <div className="flex-grow content-canvas pb-[140px] md:pb-0 relative">
           
           {isExpired && (
             <div className="w-full bg-[#F59E0B] text-gray-900 font-bold py-2 px-4 text-center z-50 relative">
@@ -461,7 +461,7 @@ export default function EventDetail() {
                   )}
                   
                   {!isOwner && (
-                  <div className="fixed bottom-0 left-0 right-0 p-4 bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-50 md:relative md:p-0 md:bg-transparent md:shadow-none">
+                  <div className="fixed bottom-[64px] left-0 right-0 p-4 bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-40 md:relative md:bottom-auto md:p-0 md:bg-transparent md:shadow-none">
                     <button 
                       onClick={handleRsvp} 
                       disabled={rsvpLoading || isRsvpd || isExpired || isUnderReview}

@@ -191,22 +191,27 @@ export default function MyTickets() {
     if (error) {
       console.error(error)
     } else if (data) {
-      const formatted = data.map((rsvp: any) => {
-        const ev = rsvp.events;
-        return {
-          id: rsvp.id,
-          event_id: rsvp.event_id,
-          title: ev?.title || 'Unknown Event',
-          category: ev?.category || 'Music',
-          city: ev?.city || 'Unknown Location',
-          date: ev?.date,
-          emoji: ev?.theme_emoji || '🎫',
-          userId: user.id,
-          locationLat: ev?.location_lat,
-          locationLng: ev?.location_lng,
-          venueName: ev?.venue_name
-        }
-      })
+      const formatted = data
+        .filter((rsvp: any) => rsvp.events)
+        .map((rsvp: any) => {
+          const ev = Array.isArray(rsvp.events) ? rsvp.events[0] : rsvp.events;
+          if (!ev) return null;
+          
+          return {
+            id: rsvp.id,
+            event_id: rsvp.event_id,
+            title: ev?.title || 'Unknown Event',
+            category: ev?.category || 'Music',
+            city: ev?.city || 'Unknown Location',
+            date: ev?.date,
+            emoji: ev?.theme_emoji || '🎫',
+            userId: user.id,
+            locationLat: ev?.location_lat,
+            locationLng: ev?.location_lng,
+            venueName: ev?.venue_name
+          }
+        })
+        .filter(Boolean)
       setTickets(formatted)
     }
     

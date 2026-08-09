@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Sparkles, MapPin, Map, Calendar as CalendarIcon } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
 import Layout from '../components/Layout'
-import { GoogleGenAI, Type } from '@google/genai'
+
 import { supabase } from '../lib/supabase'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
@@ -144,45 +144,26 @@ export default function PostEvent() {
 
     setLoading(true)
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-      if (!apiKey || apiKey === 'your_gemini_api_key') {
-         toast.error("AI Assist will be available after deploy")
-         setLoading(false)
-         return
-      }
-
-      const ai = new GoogleGenAI({ apiKey })
-      
-      const prompt = `Based on the event title "${formData.title}" in city "${formData.city}", generate a catchy event description, and pick one category from [Music, Arts, Tech, Sports, Food]. Return as JSON.`
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              description: { type: Type.STRING },
-              category: { type: Type.STRING, enum: ["Music", "Arts", "Tech", "Sports", "Food"] },
-              tags: { type: Type.ARRAY, items: { type: Type.STRING } }
-            },
-            required: ["description", "category", "tags"]
-          }
-        }
+      const { data, error } = await supabase.functions.invoke('generate-event-description', {
+        body: { title: formData.title, city: formData.city }
       })
+
+      if (error) {
+        throw new Error(error.message || "Failed to call Edge Function")
+      }
       
-      if (response.text) {
-        const result = JSON.parse(response.text)
+      if (data && data.description) {
         setFormData(prev => ({
           ...prev,
-          description: result.description,
-          category: result.category
+          description: data.description,
+          category: data.category
         }))
+      } else if (data && data.error) {
+        throw new Error(data.error)
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e)
-      toast.error("Failed to get AI response")
+      toast.error(e.message || "Failed to get AI response")
     }
     setLoading(false)
   }
