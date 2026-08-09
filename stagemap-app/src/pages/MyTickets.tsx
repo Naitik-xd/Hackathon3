@@ -36,6 +36,7 @@ interface TicketProps {
   locationLat?: number
   locationLng?: number
   venueName?: string
+  guestCount?: number
 }
 
 const TicketCard = ({ ticket, userId }: { ticket: TicketProps, userId: string }) => {
@@ -127,7 +128,9 @@ const TicketCard = ({ ticket, userId }: { ticket: TicketProps, userId: string })
 
           <div className="pt-6 flex justify-between items-end">
             <div>
-              <p className="text-gray-400 font-label-md uppercase tracking-wider text-xs">Admit One</p>
+              <p className="text-gray-400 font-label-md uppercase tracking-wider text-xs">
+                Admit {ticket.guestCount === 1 ? 'One' : ticket.guestCount}
+              </p>
               <p className="font-headline-sm text-gray-900 mt-1">Entry Pass</p>
             </div>
             
@@ -220,7 +223,8 @@ export default function MyTickets() {
             userId: user.id,
             locationLat: ev?.location_lat,
             locationLng: ev?.location_lng,
-            venueName: ev?.venue_name
+            venueName: ev?.venue_name,
+            guestCount: rsvp.guest_count || 1
           }
         })
         .filter(Boolean) as TicketProps[]
