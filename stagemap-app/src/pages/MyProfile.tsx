@@ -13,8 +13,8 @@ export default function MyProfile() {
   const [stats, setStats] = useState({ posted: 0, attended: 0 })
   const [loading, setLoading] = useState(true)
   const [userEmail, setUserEmail] = useState('')
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [adminNotifications, setAdminNotifications] = useState<any[]>([])
+  const [_isAdmin, setIsAdmin] = useState(false)
+  const [_adminNotifications, setAdminNotifications] = useState<any[]>([])
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
@@ -84,7 +84,7 @@ export default function MyProfile() {
     setLoading(false)
   }
 
-  const markAsRead = async (id: string) => {
+  const _markAsRead = async (id: string) => {
     await supabase.from('admin_notifications').update({ is_read: true }).eq('id', id)
     setAdminNotifications(prev => prev.filter(n => n.id !== id))
   }

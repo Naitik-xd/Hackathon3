@@ -20,7 +20,7 @@ import Guidelines from './pages/Guidelines'
 import Support from './pages/Support'
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
-  state = { hasError: false, error: null }
+  state = { hasError: false, error: null as any }
   static getDerivedStateFromError(error: any) { return { hasError: true, error } }
   render() {
     if (this.state.hasError) return (

@@ -62,7 +62,7 @@ export default function MapView() {
 
   useEffect(() => {
     const fetchLocations = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('events')
         .select('id, title, theme_emoji, category, location_lat, location_lng, date, is_expired')
         .lt('report_count', 7)

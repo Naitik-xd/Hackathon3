@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, MapPin, Map, Calendar as CalendarIcon, Plus, Minus, Check } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Sparkles, MapPin, Map, Calendar as CalendarIcon } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
 import Layout from '../components/Layout'
 import { GoogleGenAI, Type } from '@google/genai'
