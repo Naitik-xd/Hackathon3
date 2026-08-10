@@ -45,14 +45,6 @@ Security
 
 All API keys stored in Vercel environment variables and Supabase secrets — never exposed in code. Security headers implemented via vercel.json including CSP, X-Frame-Options, X-Content-Type-Options and Referrer-Policy. Gemini API called via Supabase Edge Function only. noindex meta tag on all pages.
 
-Open Source Assets
-
-Plus Jakarta Sans — OFL License
-Lucide React Icons — MIT License
-Leaflet.js — BSD-2 License
-OpenStreetMap tiles — ODbL License
-Framer Motion — MIT License
-react-hot-toast — MIT License
 
 Map data © OpenStreetMap contributors
 
