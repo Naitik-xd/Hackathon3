@@ -7,11 +7,11 @@ on:
 
 jobs:
   ping-database:
-    name: Ping Supabase Database
+    name: Ping Supabase rsvp Table
     runs-on: ubuntu-latest
     steps:
-      - name: Send GET request to Supabase
+      - name: Send GET request to rsvp table
         run: |
-          curl -s -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/profiles?select=*&limit=1" \
+          curl -s -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/rsvp?select=*&limit=1" \
           -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
