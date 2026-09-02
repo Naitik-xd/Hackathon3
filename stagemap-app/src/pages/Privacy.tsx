@@ -22,53 +22,25 @@ export default function Privacy() {
 
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold text-gray-900">1. Information We Collect</h2>
-            <p>We may collect, use, store and transfer different kinds of personal data about you which we have grouped together as follows:</p>
             <ul className="list-disc list-inside space-y-2 ml-4">
-              <li><strong>Identity Data</strong> includes first name, last name, username or similar identifier.</li>
-              <li><strong>Contact Data</strong> includes email address.</li>
-              <li><strong>Technical Data</strong> includes internet protocol (IP) address, your login data, browser type and version, time zone setting and location.</li>
-              <li><strong>Usage Data</strong> includes information about how you use our website, events you post, and RSVP details.</li>
+              <li><strong>Identity Data:</strong> Username and profile information.</li>
+              <li><strong>Contact Data:</strong> Email address.</li>
+              <li><strong>Usage Data:</strong> Events you post and RSVP details.</li>
             </ul>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold text-gray-900">2. How We Use Your Information</h2>
-            <p>We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:</p>
             <ul className="list-disc list-inside space-y-2 ml-4">
-              <li>To provide and maintain our Service.</li>
-              <li>To notify you about changes to our Service.</li>
-              <li>To allow you to participate in interactive features of our Service when you choose to do so.</li>
-              <li>To provide customer support.</li>
-              <li>To gather analysis or valuable information so that we can improve our Service.</li>
-              <li>To monitor the usage of our Service.</li>
+              <li>To provide, maintain, and improve our Service.</li>
+              <li>To allow you to participate in interactive features like posting events.</li>
             </ul>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold text-gray-900">3. Data Security</h2>
             <p>
-              We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorised way, altered or disclosed. All data is stored securely using industry-standard database practices (Supabase / PostgreSQL).
-            </p>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-gray-900">4. Third-Party Links</h2>
-            <p>
-              This website may include links to third-party websites, plug-ins and applications. Clicking on those links or enabling those connections may allow third parties to collect or share data about you. We do not control these third-party websites and are not responsible for their privacy statements.
-            </p>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-gray-900">5. Children's Privacy</h2>
-            <p>
-              Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us.
-            </p>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-gray-900">6. Changes to This Privacy Policy</h2>
-            <p>
-              We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.
+              Data is stored securely using Supabase (PostgreSQL). We do not sell your data or share it with unauthorized third parties.
             </p>
           </section>
         </div>
