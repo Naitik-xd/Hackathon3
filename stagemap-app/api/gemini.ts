@@ -1,10 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenAI } from '@google/genai';
 
-// Initialize Supabase Client with Service Key to bypass RLS for IP tracking
+// Initialize Supabase Client (falls back to ANON key if SERVICE key is removed)
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -40,38 +40,7 @@ export default async function handler(req: any, res: any) {
 
   // Get IP address
   const forwardedFor = req.headers['x-forwarded-for'];
-  const ip = typeof forwardedFor === 'string' ? forwardedFor.split(',')[0] : 'unknown';
-
-  // Admin Commands via Title field
-  const adminBanMatch = title.match(/^\/admin-ban\s+([^\s]+)\s+([^\s]+)/);
-  const adminUnbanMatch = title.match(/^\/admin-unban\s+([^\s]+)\s+([^\s]+)/);
-
-  if (adminBanMatch || adminUnbanMatch) {
-    const isBan = !!adminBanMatch;
-    const targetIp = isBan ? adminBanMatch[1] : adminUnbanMatch![1];
-    const password = isBan ? adminBanMatch[2] : adminUnbanMatch![2];
-
-    if (password !== process.env.PASSWORD) {
-      return res.status(403).json({ error: 'Invalid admin password' });
-    }
-
-    // Upsert the record for the target IP to ban/unban them permanently
-    const { error } = await supabase
-      .from('gemini_ip_tracking')
-      .upsert({ 
-        ip_address: targetIp, 
-        is_perma_banned: isBan 
-      }, { onConflict: 'ip_address' });
-
-    if (error) {
-      return res.status(500).json({ error: 'Database error' });
-    }
-
-    return res.status(200).json({ 
-      description: `Successfully ${isBan ? 'banned' : 'unbanned'} IP: ${targetIp}`,
-      category: 'Tech'
-    });
-  }
+  const ip = typeof forwardedFor === 'string' ? forwardedFor.split(',')[0].trim() : 'unknown';
 
   // 1. Fetch IP Tracking Record
   let { data: trackRecord, error: fetchError } = await supabase
@@ -161,7 +130,10 @@ export default async function handler(req: any, res: any) {
     }
 
     // 5. Update Tracking Record
-    await supabase.from('gemini_ip_tracking').upsert(trackRecord);
+    const { error: upsertError } = await supabase.from('gemini_ip_tracking').upsert(trackRecord);
+    if (upsertError) {
+      console.error('Failed to upsert IP tracking record:', upsertError);
+    }
 
     return res.status(200).json({ 
       description: result.description, 
