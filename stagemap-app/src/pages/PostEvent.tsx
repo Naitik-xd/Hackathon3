@@ -144,16 +144,12 @@ export default function PostEvent() {
 
     setLoading(true)
     try {
-      const response = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: formData.title, city: formData.city })
+      const { data, error } = await supabase.functions.invoke('generate-event-description', {
+        body: { title: formData.title, city: formData.city }
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to call AI Assist")
+      if (error) {
+        throw new Error(error.message || "Failed to call Edge Function")
       }
       
       if (data && data.description) {
@@ -163,6 +159,8 @@ export default function PostEvent() {
           category: data.category
         }))
         toast.success("AI generated a description!")
+      } else if (data && data.error) {
+        throw new Error(data.error)
       }
     } catch (e: any) {
       console.error(e)
