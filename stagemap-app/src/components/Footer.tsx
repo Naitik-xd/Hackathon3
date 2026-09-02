@@ -8,6 +8,7 @@ export default function Footer() {
           <Link to="/vision" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">About</Link>
           <Link to="/guidelines" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Guidelines</Link>
           <Link to="/privacy" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Privacy Policy</Link>
+          <Link to="/terms" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Terms</Link>
           <Link to="/support" className="text-[#6B7280] text-[14px] hover:text-[#7C3AED] transition-colors">Support</Link>
         </div>
         <div className="text-[#9CA3AF] text-xs mt-4">

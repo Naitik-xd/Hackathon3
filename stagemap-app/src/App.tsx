@@ -16,6 +16,7 @@ import Vision from './pages/Vision'
 import React from 'react'
 import TicketVerify from './pages/TicketVerify'
 import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
 import Guidelines from './pages/Guidelines'
 import Support from './pages/Support'
 
@@ -71,6 +72,7 @@ function AnimatedRoutes() {
         <Route path="/map" element={<MapView />} />
         <Route path="/post" element={<ErrorBoundary><PostEvent /></ErrorBoundary>} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
         <Route path="/guidelines" element={<Guidelines />} />
         <Route path="/support" element={<Support />} />
         <Route path="/event/:id" element={<EventDetail />} />
