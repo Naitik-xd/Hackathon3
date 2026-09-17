@@ -1,7 +1,7 @@
 📍 StageMap
 Discover What's Happening Near You
 
-Built for HackDevengers 10 by Devengers | August 2026
+Built for HackDevengers 1.0 by Devengers | August 2026
 
 Live Demo: https://na1t1k-hackathon3.vercel.app
 
