@@ -50,7 +50,7 @@ Map data © OpenStreetMap contributors
 
 Disclaimer
 
-This application was built solely for the HackDevengers 10 Hackathon organized by Devengers. It is a prototype and proof-of-concept only — not a real commercial product.
+This application was built solely for the HackDevengers 1.0 Hackathon organized by Devengers. It is a prototype and proof-of-concept only — not a real commercial product.
 
 Built By
 
